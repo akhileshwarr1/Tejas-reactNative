@@ -11,10 +11,15 @@ import {
   Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../components/ThemeProvider';
 
 const LoginScreen = ({ navigation }) => {
+  const { theme, isDarkMode } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Create dynamic styles that use the theme
+  const dynamicStyles = createDynamicStyles(theme, isDarkMode);
 
   const handleLogin = () => {
     // In a real app, you would implement authentication logic here
@@ -26,36 +31,36 @@ const LoginScreen = ({ navigation }) => {
   return (
     <ImageBackground
       source={require('../../assets/images/reboot.png')}
-      style={styles.backgroundImage}
+      style={dynamicStyles.backgroundImage}
       blurRadius={2}
     >
       <TouchableOpacity 
-        style={styles.backButton}
+        style={dynamicStyles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Ionicons name="arrow-back" size={28} color="#fff" />
+        <Ionicons name="arrow-back" size={28} color={theme.colors.white} />
       </TouchableOpacity>
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={dynamicStyles.container}
       >
-        <View style={styles.overlay}>
-          <View style={styles.logoContainer}>
+        <View style={dynamicStyles.overlay}>
+          <View style={dynamicStyles.logoContainer}>
             <Image
               source={require('../../assets/images/logo.png')}
-              style={styles.logo}
+              style={dynamicStyles.logo}
               resizeMode="contain"
             />
           </View>
 
-          <Text style={styles.title}>Event Login</Text>
+          <Text style={dynamicStyles.title}>Event Login</Text>
           
-          <View style={styles.inputContainer}>
+          <View style={dynamicStyles.inputContainer}>
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               placeholder="Email"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.colors.grey500}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -63,16 +68,16 @@ const LoginScreen = ({ navigation }) => {
             />
             
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               placeholder="Password"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.colors.grey500}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
+            <TouchableOpacity style={dynamicStyles.loginButton} onPress={handleLogin}>
+              <Text style={dynamicStyles.loginButtonText}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -81,7 +86,8 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+// Create dynamic styles that use theme tokens
+const createDynamicStyles = (theme: any, isDarkMode: boolean) => StyleSheet.create({
   backgroundImage: {
     flex: 1,
     width: '100%',
@@ -93,46 +99,45 @@ const styles = StyleSheet.create({
   },
   overlay: {
     backgroundColor: 'rgba(0,0,0,0.4)',
-    borderRadius: 20,
+    borderRadius: theme.borders.radius.lg,
     width: '85%',
-    padding: 20,
+    padding: theme.spacing.lg,
     alignItems: 'center',
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   logo: {
     width: 150,
     height: 150,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 30,
+    fontSize: theme.typography.fontSize.xxxl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.xl,
   },
   inputContainer: {
     width: '100%',
   },
   input: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    borderRadius: theme.borders.radius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.grey700,
   },
   loginButton: {
-    backgroundColor: '#FF5722',
-    borderRadius: 8,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
+    ...theme.components.button.primary,
+    marginTop: theme.spacing.sm,
   },
   loginButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.medium,
+    textAlign: 'center',
   },
   backButton: {
     position: 'absolute',
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 20,
-    padding: 8,
+    padding: theme.spacing.sm,
   },
 });
 

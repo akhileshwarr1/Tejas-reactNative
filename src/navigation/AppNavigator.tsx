@@ -6,8 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { View, Text, StyleSheet } from 'react-native';
 
 import HomeScreen from '../screens/HomeScreen';
+import LloydsHomeScreen from '../screens/LloydsHomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SuccessScreen from '../screens/SuccessScreen';
+import MindMoneyScreen from '../screens/MindMoneyScreen';
+import ChatTherapyScreen from '../screens/ChatTherapyScreen';
 
 // Create navigation stacks
 const Stack = createNativeStackNavigator();
@@ -32,6 +35,16 @@ const MainStack = () => {
         component={SuccessScreen} 
         options={{ headerShown: false }}
       />
+      <Stack.Screen 
+        name="MindMoney" 
+        component={MindMoneyScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="ChatTherapy" 
+        component={ChatTherapyScreen} 
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
@@ -45,6 +58,8 @@ const MainTabs = () => {
           let iconName;
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'LloydsHome') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
           } else if (route.name === 'Schedule') {
             iconName = focused ? 'calendar' : 'calendar-outline';
           } else if (route.name === 'Speakers') {
@@ -54,7 +69,7 @@ const MainTabs = () => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#FF5722',
+        tabBarActiveTintColor: '#006A4D', // Using Lloyds primary green
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           paddingBottom: 5,
@@ -71,12 +86,20 @@ const MainTabs = () => {
         }}
       />
       <Tab.Screen 
+        name="LloydsHome" 
+        component={LloydsHomeScreen}
+        options={{ 
+          headerShown: false,
+          title: 'Lloyds Home'
+        }}
+      />
+      <Tab.Screen 
         name="Schedule" 
         component={PlaceholderScreen}
         options={{ 
           title: 'Schedule',
           headerStyle: {
-            backgroundColor: '#FF5722',
+            backgroundColor: '#006A4D', // Lloyds green instead of #FF5722
           },
           headerTintColor: '#fff'
         }}
@@ -87,7 +110,7 @@ const MainTabs = () => {
         options={{ 
           title: 'Speakers',
           headerStyle: {
-            backgroundColor: '#FF5722',
+            backgroundColor: '#006A4D', // Lloyds green instead of #FF5722
           },
           headerTintColor: '#fff'
         }}
@@ -98,7 +121,7 @@ const MainTabs = () => {
         options={{ 
           title: 'More',
           headerStyle: {
-            backgroundColor: '#FF5722',
+            backgroundColor: '#006A4D', // Lloyds green instead of #FF5722
           },
           headerTintColor: '#fff'
         }}

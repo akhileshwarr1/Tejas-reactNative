@@ -9,12 +9,12 @@ import {
   ImageBackground,
   Dimensions,
   ActivityIndicator,
-  FlatList,
   TextInput,
   Modal,
   Alert
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { useTheme } from '../components/ThemeProvider';
 
 // Define navigation types
 type RootStackParamList = {
@@ -39,6 +39,7 @@ const { width } = Dimensions.get('window');
 const ITEMS_PER_PAGE = 3; // Number of items to display per page
 
 const HomeScreen = ({ navigation }: HomeScreenProps) => {
+  const { theme, isDarkMode } = useTheme();
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +49,9 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const [suggestionResponse, setSuggestionResponse] = useState('');
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Create dynamic styles that use the theme
+  const dynamicStyles = createDynamicStyles(theme, isDarkMode);
 
   useEffect(() => {
     fetchItems();
@@ -100,16 +104,6 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     }
   };
 
-  const renderItem = ({ item }: { item: Item }) => (
-    <View style={styles.itemCard}>
-      <Text style={styles.itemId}>Item ID: {item.id}</Text>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemDescription}>{item.description}</Text>
-      <Text style={styles.itemPrice}>Price: ${item.price.toFixed(2)}</Text>
-      <Text style={styles.itemCategory}>Category: {item.category}</Text>
-    </View>
-  );
-
   const submitSuggestion = async () => {
     if (!suggestionInput.trim()) {
       Alert.alert('Error', 'Please enter a suggestion prompt');
@@ -152,145 +146,146 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={dynamicStyles.container}>
       <ImageBackground
         source={require('../../assets/images/reboot.png')}
-        style={styles.headerImage}
+        style={dynamicStyles.headerImage}
       >
-        <View style={styles.overlay}>
+        <View style={dynamicStyles.overlay}>
           <Image 
             source={require('../../assets/images/logo.png')} 
-            style={styles.logo}
+            style={dynamicStyles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.eventTitle}>REBOOT 2025</Text>
-          <Text style={styles.eventTagline}>The Ultimate Tech Revival</Text>
+          <Text style={dynamicStyles.eventTitle}>REBOOT 2025</Text>
+          <Text style={dynamicStyles.eventTagline}>The Ultimate Tech Revival</Text>
         </View>
       </ImageBackground>
 
-      <View style={styles.contentContainer}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Event Details</Text>
-          <Text style={styles.sectionText}>
+      <View style={dynamicStyles.contentContainer}>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Event Details</Text>
+          <Text style={dynamicStyles.sectionText}>
             Join us for the most anticipated tech event of the year! REBOOT 2025 brings together industry leaders, 
             innovators, and tech enthusiasts for three days of inspiring talks, workshops, and networking opportunities.
           </Text>
           
-          <Text style={styles.infoLabel}>Date & Time:</Text>
-          <Text style={styles.infoText}>April 15-17, 2025 | 9:00 AM - 6:00 PM</Text>
+          <Text style={dynamicStyles.infoLabel}>Date & Time:</Text>
+          <Text style={dynamicStyles.infoText}>April 15-17, 2025 | 9:00 AM - 6:00 PM</Text>
           
-          <Text style={styles.infoLabel}>Location:</Text>
-          <Text style={styles.infoText}>Tech Convention Center, Silicon Valley</Text>
+          <Text style={dynamicStyles.infoLabel}>Location:</Text>
+          <Text style={dynamicStyles.infoText}>Tech Convention Center, Silicon Valley</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Event Highlights</Text>
-          <View style={styles.highlightItem}>
-            <Text style={styles.highlightTitle}>• Keynote Speeches</Text>
-            <Text style={styles.highlightDescription}>Hear from top tech visionaries about the future of technology</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Event Highlights</Text>
+          <View style={dynamicStyles.highlightItem}>
+            <Text style={dynamicStyles.highlightTitle}>• Keynote Speeches</Text>
+            <Text style={dynamicStyles.highlightDescription}>Hear from top tech visionaries about the future of technology</Text>
           </View>
 
-          <View style={styles.keynoteSection}>
-            <Text style={styles.keynoteHeader}>Featured Keynote Speakers:</Text>
-            <View style={styles.speakerItem}>
-              <Text style={styles.speakerName}>Maneesha Rachakonda</Text>
-              <Text style={styles.speakerRole}>Chief Innovation Officer, Tech Futures</Text>
-              <Text style={styles.speakerTopic}>"AI-Powered Business Transformation in 2025"</Text>
+          <View style={dynamicStyles.keynoteSection}>
+            <Text style={dynamicStyles.keynoteHeader}>Featured Keynote Speakers:</Text>
+            <View style={dynamicStyles.speakerItem}>
+              <Text style={dynamicStyles.speakerName}>Maneesha Rachakonda</Text>
+              <Text style={dynamicStyles.speakerRole}>Chief Innovation Officer, Tech Futures</Text>
+              <Text style={dynamicStyles.speakerTopic}>"AI-Powered Business Transformation in 2025"</Text>
             </View>
           </View>
           
-          <View style={styles.highlightItem}>
-            <Text style={styles.highlightTitle}>• Interactive Workshops</Text>
-            <Text style={styles.highlightDescription}>Get hands-on experience with cutting-edge technologies</Text>
+          <View style={dynamicStyles.highlightItem}>
+            <Text style={dynamicStyles.highlightTitle}>• Interactive Workshops</Text>
+            <Text style={dynamicStyles.highlightDescription}>Get hands-on experience with cutting-edge technologies</Text>
           </View>
           
-          <View style={styles.highlightItem}>
-            <Text style={styles.highlightTitle}>• Networking Opportunities</Text>
-            <Text style={styles.highlightDescription}>Connect with industry professionals and potential collaborators</Text>
+          <View style={dynamicStyles.highlightItem}>
+            <Text style={dynamicStyles.highlightTitle}>• Networking Opportunities</Text>
+            <Text style={dynamicStyles.highlightDescription}>Connect with industry professionals and potential collaborators</Text>
           </View>
           
-          <View style={styles.highlightItem}>
-            <Text style={styles.highlightTitle}>• Tech Expo</Text>
-            <Text style={styles.highlightDescription}>Experience the latest innovations and product demonstrations</Text>
+          <View style={dynamicStyles.highlightItem}>
+            <Text style={dynamicStyles.highlightTitle}>• Tech Expo</Text>
+            <Text style={dynamicStyles.highlightDescription}>Experience the latest innovations and product demonstrations</Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Event Merchandise</Text>
-          <Text style={styles.sectionText}>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Event Merchandise</Text>
+          <Text style={dynamicStyles.sectionText}>
             Explore the exclusive merchandise available at REBOOT 2025. Pre-order now and pick up your items at the event!
           </Text>
           
           {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#FF5722" />
-              <Text style={styles.loadingText}>Loading merchandise...</Text>
+            <View style={dynamicStyles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primaryDarkGreen} />
+              <Text style={dynamicStyles.loadingText}>Loading merchandise...</Text>
             </View>
           ) : error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity style={styles.retryButton} onPress={fetchItems}>
-                <Text style={styles.retryButtonText}>Retry</Text>
+            <View style={dynamicStyles.errorContainer}>
+              <Text style={dynamicStyles.errorText}>{error}</Text>
+              <TouchableOpacity style={dynamicStyles.retryButton} onPress={fetchItems}>
+                <Text style={dynamicStyles.retryButtonText}>Retry</Text>
               </TouchableOpacity>
             </View>
           ) : items.length === 0 ? (
-            <Text style={styles.noItemsText}>No merchandise available at the moment.</Text>
+            <Text style={dynamicStyles.noItemsText}>No merchandise available at the moment.</Text>
           ) : (
-            <View style={styles.itemsContainer}>
+            <View style={dynamicStyles.itemsContainer}>
               {getCurrentItems().map((item: Item) => (
-                <View key={item.id.toString()} style={styles.itemCard}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemDescription}>{item.description}</Text>
-                  <View style={styles.itemFooter}>
-                    <Text style={styles.itemPrice}>${item.price?.toFixed(2) || '0.00'}</Text>
-                    <Text style={styles.itemCategory}>{item.category}</Text>
+                <View key={item.id.toString()} style={dynamicStyles.itemCard}>
+                  <Text style={dynamicStyles.itemName}>{item.name}</Text>
+                  <Text style={dynamicStyles.itemDescription}>{item.description}</Text>
+                  <View style={dynamicStyles.itemFooter}>
+                    <Text style={dynamicStyles.itemPrice}>${item.price?.toFixed(2) || '0.00'}</Text>
+                    <Text style={dynamicStyles.itemCategory}>{item.category}</Text>
                   </View>
                 </View>
               ))}
-              <View style={styles.paginationContainer}>
+              <View style={dynamicStyles.paginationContainer}>
                 <TouchableOpacity 
-                  style={[styles.paginationButton, currentPage === 1 && styles.disabledButton]} 
+                  style={[dynamicStyles.paginationButton, currentPage === 1 && dynamicStyles.disabledButton]} 
                   onPress={goToPrevPage}
                   disabled={currentPage === 1}
                 >
-                  <Text style={styles.paginationButtonText}>Previous</Text>
+                  <Text style={dynamicStyles.paginationButtonText}>Previous</Text>
                 </TouchableOpacity>
-                <Text style={styles.pageIndicator}>{currentPage} / {totalPages}</Text>
+                <Text style={dynamicStyles.pageIndicator}>{currentPage} / {totalPages}</Text>
                 <TouchableOpacity 
-                  style={[styles.paginationButton, currentPage === totalPages && styles.disabledButton]} 
+                  style={[dynamicStyles.paginationButton, currentPage === totalPages && dynamicStyles.disabledButton]} 
                   onPress={goToNextPage}
                   disabled={currentPage === totalPages}
                 >
-                  <Text style={styles.paginationButtonText}>Next</Text>
+                  <Text style={dynamicStyles.paginationButtonText}>Next</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Get AI Suggestions</Text>
-          <Text style={styles.sectionText}>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Get AI Suggestions</Text>
+          <Text style={dynamicStyles.sectionText}>
             Ask our AI for creative suggestions related to tech, events, or anything else you'd like to know!
           </Text>
           
           <TextInput
-            style={styles.suggestionInput}
+            style={dynamicStyles.suggestionInput}
             placeholder="Enter your suggestion prompt"
             value={suggestionInput}
             onChangeText={setSuggestionInput}
             multiline={false}
+            placeholderTextColor={theme.colors.grey500}
           />
           
           <TouchableOpacity 
-            style={styles.suggestionButton} 
+            style={dynamicStyles.suggestionButton} 
             onPress={submitSuggestion}
             disabled={suggestionLoading}
           >
             {suggestionLoading ? (
-              <ActivityIndicator size="small" color="#ffffff" />
+              <ActivityIndicator size="small" color={theme.colors.white} />
             ) : (
-              <Text style={styles.suggestionButtonText}>Get Suggestion</Text>
+              <Text style={dynamicStyles.suggestionButtonText}>Get Suggestion</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -301,33 +296,33 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>AI Suggestion</Text>
-              <ScrollView style={styles.modalScrollView}>
-                <Text style={styles.modalText}>{suggestionResponse}</Text>
+          <View style={dynamicStyles.modalOverlay}>
+            <View style={dynamicStyles.modalContent}>
+              <Text style={dynamicStyles.modalTitle}>AI Suggestion</Text>
+              <ScrollView style={dynamicStyles.modalScrollView}>
+                <Text style={dynamicStyles.modalText}>{suggestionResponse}</Text>
               </ScrollView>
               <TouchableOpacity 
-                style={styles.modalButton}
+                style={dynamicStyles.modalButton}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.modalButtonText}>Close</Text>
+                <Text style={dynamicStyles.modalButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
 
         <TouchableOpacity 
-          style={styles.loginButton} 
+          style={dynamicStyles.loginButton} 
           onPress={navigateToLogin}
         >
-          <Text style={styles.loginButtonText}>Login to Event Portal</Text>
+          <Text style={dynamicStyles.loginButtonText}>Login to Event Portal</Text>
         </TouchableOpacity>
 
-        <View style={styles.imageGallery}>
+        <View style={dynamicStyles.imageGallery}>
           <Image 
             source={require('../../assets/images/ticket.png')} 
-            style={styles.galleryImage}
+            style={dynamicStyles.galleryImage}
             resizeMode="cover"
           />
         </View>
@@ -336,10 +331,11 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+// Create dynamic styles that use theme tokens
+const createDynamicStyles = (theme: any, isDarkMode: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: isDarkMode ? theme.colors.grey700 : theme.colors.background,
   },
   headerImage: {
     width: '100%',
@@ -350,302 +346,277 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   logo: {
     width: 100,
     height: 100,
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   eventTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 5,
+    fontSize: theme.typography.fontSize.xxxl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.xs,
   },
   eventTagline: {
-    fontSize: 18,
-    color: '#ffffff',
+    fontSize: theme.typography.fontSize.lg,
+    color: theme.colors.white,
     fontStyle: 'italic',
   },
   contentContainer: {
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   section: {
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...theme.components.card.container,
+    marginBottom: theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FF5722',
-    marginBottom: 15,
+    fontSize: theme.typography.fontSize.xxl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.primaryDarkGreen,
+    marginBottom: theme.spacing.md,
   },
   sectionText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-    marginBottom: 15,
+    fontSize: theme.typography.fontSize.md,
+    lineHeight: theme.typography.lineHeight.normal,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
+    marginBottom: theme.spacing.md,
   },
   infoLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#444',
-    marginTop: 10,
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
+    marginTop: theme.spacing.sm,
   },
   infoText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
+    fontSize: theme.typography.fontSize.md,
+    color: isDarkMode ? theme.colors.grey400 : theme.colors.grey600,
+    marginBottom: theme.spacing.xs,
   },
   highlightItem: {
-    marginBottom: 12,
+    marginBottom: theme.spacing.sm,
   },
   highlightTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
   },
   highlightDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 15,
+    fontSize: theme.typography.fontSize.sm,
+    color: isDarkMode ? theme.colors.grey400 : theme.colors.grey600,
+    marginLeft: theme.spacing.md,
   },
   keynoteSection: {
-    marginTop: 10,
-    marginBottom: 15,
-    backgroundColor: 'rgba(255, 87, 34, 0.05)',
-    padding: 12,
-    borderRadius: 8,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+    backgroundColor: isDarkMode ? 'rgba(0, 106, 77, 0.1)' : 'rgba(0, 106, 77, 0.05)',
+    padding: theme.spacing.sm,
+    borderRadius: theme.borders.radius.md,
     borderLeftWidth: 3,
-    borderLeftColor: '#FF5722',
+    borderLeftColor: theme.colors.primaryDarkGreen,
   },
   keynoteHeader: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
+    marginBottom: theme.spacing.sm,
   },
   speakerItem: {
-    marginLeft: 15,
-    marginBottom: 8,
+    marginLeft: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   speakerName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FF5722',
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.primaryDarkGreen,
   },
   speakerRole: {
-    fontSize: 13,
+    fontSize: theme.typography.fontSize.sm,
     fontStyle: 'italic',
-    color: '#555',
+    color: isDarkMode ? theme.colors.grey400 : theme.colors.grey600,
   },
   speakerTopic: {
-    fontSize: 14,
-    color: '#444',
-    marginTop: 3,
+    fontSize: theme.typography.fontSize.sm,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
+    marginTop: theme.spacing.xs,
   },
   loginButton: {
-    backgroundColor: '#FF5722',
-    borderRadius: 10,
-    padding: 15,
-    alignItems: 'center',
-    marginBottom: 20,
+    ...theme.components.button.primary,
+    marginBottom: theme.spacing.lg,
   },
   loginButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.medium,
+    textAlign: 'center',
   },
   imageGallery: {
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   galleryImage: {
     width: '100%',
     height: 200,
-    borderRadius: 10,
+    borderRadius: theme.borders.radius.lg,
   },
   itemCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
+    backgroundColor: isDarkMode ? theme.colors.grey600 : theme.colors.grey100,
+    borderRadius: theme.borders.radius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
     borderLeftWidth: 3,
-    borderLeftColor: '#FF5722',
-  },
-  itemId: {
-    fontSize: 14,
-    color: '#666',
+    borderLeftColor: theme.colors.primaryDarkGreen,
   },
   itemName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: isDarkMode ? theme.colors.white : theme.colors.grey700,
+    marginBottom: theme.spacing.xs,
   },
   itemDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10,
-    lineHeight: 20,
+    fontSize: theme.typography.fontSize.sm,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey600,
+    marginBottom: theme.spacing.sm,
+    lineHeight: theme.typography.lineHeight.normal,
   },
   itemPrice: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FF5722',
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.primaryDarkGreen,
   },
   itemCategory: {
-    fontSize: 14,
-    color: '#666',
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 8,
+    fontSize: theme.typography.fontSize.sm,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey600,
+    backgroundColor: isDarkMode ? theme.colors.grey500 : theme.colors.grey200,
+    paddingHorizontal: theme.spacing.sm,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: theme.borders.radius.sm,
   },
   errorText: {
-    fontSize: 16,
-    color: 'red',
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.error,
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   loadingText: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 10,
+    fontSize: theme.typography.fontSize.md,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey600,
+    marginTop: theme.spacing.sm,
   },
   errorContainer: {
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   retryButton: {
-    backgroundColor: '#FF5722',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    ...theme.components.button.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
     borderRadius: 25,
   },
   retryButtonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontFamily: theme.typography.fontFamily.medium,
   },
   noItemsText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: theme.typography.fontSize.md,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey600,
     fontStyle: 'italic',
     textAlign: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   itemsContainer: {
-    marginTop: 10,
+    marginTop: theme.spacing.sm,
   },
   itemFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
-    paddingTop: 8,
+    marginTop: theme.spacing.sm,
+    paddingTop: theme.spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: isDarkMode ? theme.colors.grey500 : theme.colors.grey300,
   },
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
   paginationButton: {
-    backgroundColor: '#FF5722',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    ...theme.components.button.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
     borderRadius: 25,
   },
   paginationButtonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontFamily: theme.typography.fontFamily.medium,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.colors.grey400,
   },
   pageIndicator: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
   },
   suggestionInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    marginBottom: 15,
+    ...theme.components.input.container,
+    marginBottom: theme.spacing.md,
+    color: isDarkMode ? theme.colors.white : theme.colors.grey700,
   },
   suggestionButton: {
-    backgroundColor: '#FF5722',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 10,
+    ...theme.components.button.primary,
+    marginBottom: theme.spacing.sm,
   },
   suggestionButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    textAlign: 'center',
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   modalContent: {
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    padding: 20,
+    backgroundColor: isDarkMode ? theme.colors.grey700 : theme.colors.white,
+    borderRadius: theme.borders.radius.lg,
+    padding: theme.spacing.lg,
     width: '90%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...theme.shadows.medium,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FF5722',
-    marginBottom: 15,
+    fontSize: theme.typography.fontSize.xl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.primaryDarkGreen,
+    marginBottom: theme.spacing.md,
     textAlign: 'center',
   },
   modalScrollView: {
     maxHeight: 200,
   },
   modalText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 20,
-    lineHeight: 24,
+    fontSize: theme.typography.fontSize.md,
+    color: isDarkMode ? theme.colors.grey300 : theme.colors.grey700,
+    marginBottom: theme.spacing.lg,
+    lineHeight: theme.typography.lineHeight.normal,
   },
   modalButton: {
-    backgroundColor: '#FF5722',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
+    ...theme.components.button.primary,
   },
   modalButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.md,
+    fontFamily: theme.typography.fontFamily.medium,
+    textAlign: 'center',
   },
 });
 
