@@ -10,8 +10,16 @@ import {
 } from 'react-native';
 import { useTheme } from '../components/ThemeProvider';
 import { Ionicons } from '@expo/vector-icons';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const LloydsHomeScreen = ({ navigation }) => {
+// Define navigation prop type
+type LloydsHomeScreenNavigationProp = StackNavigationProp<any, 'LloydsHome'>;
+
+interface LloydsHomeScreenProps {
+  navigation: LloydsHomeScreenNavigationProp;
+}
+
+const LloydsHomeScreen = ({ navigation }: LloydsHomeScreenProps) => {
   const { theme, isDarkMode } = useTheme();
   
   // Create dynamic styles using the theme
@@ -20,6 +28,11 @@ const LloydsHomeScreen = ({ navigation }) => {
   // Navigate to MindMoney screen
   const navigateToMindMoney = () => {
     navigation.navigate('MindMoney');
+  };
+
+  // Navigate to Rewards screen
+  const navigateToRewards = () => {
+    navigation.navigate('Rewards');
   };
 
   return (
@@ -71,6 +84,14 @@ const LloydsHomeScreen = ({ navigation }) => {
           >
             <Ionicons name="bulb" size={24} color={theme.colors.primaryDarkGreen} />
             <Text style={styles.quickActionText}>Mind & Money</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.quickActionButton}
+            onPress={navigateToRewards}
+          >
+            <Ionicons name="star" size={24} color={theme.colors.primaryDarkGreen} />
+            <Text style={styles.quickActionText}>Rewards</Text>
           </TouchableOpacity>
 
           <View style={styles.quickActionButton}>

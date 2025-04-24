@@ -11,10 +11,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   FlatList,
+  AppState,
+  AppStateStatus,
   Animated
 } from 'react-native';
 import { useTheme } from '../components/ThemeProvider';
 import { Ionicons } from '@expo/vector-icons';
+import { notificationService, NotificationData } from '../services/NotificationService';
+import * as Notifications from 'expo-notifications';
 
 const MindMoneyScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
@@ -98,6 +102,16 @@ const MindMoneyScreen = ({ navigation }) => {
       description: `You could save £${mockFinancialData.savingOpportunities[0].saving + mockFinancialData.savingOpportunities[1].saving} by optimizing your spending on entertainment and dining.`,
       icon: 'cash'
     }
+    ,
+    {
+      id: '5',
+      type: 'saving',
+      title: 'Well done!',
+      description: `You stayed on track for both your wallet and your wellbeing. You’re not just rich — you’re wise. 🌿`,
+      icon: 'fitness'
+    }
+
+    
   ];
 
   // Sample questions that user can ask the AI
@@ -240,7 +254,7 @@ const MindMoneyScreen = ({ navigation }) => {
         description: 'AI-driven apps for tracking expenses and creating savings plans.',
         icon: 'calculator',
         onPress: navigateToBudgeting
-      },
+    },
     {
       id: 'ai-assistant',
       title: 'AI Financial Assistant',
@@ -248,7 +262,13 @@ const MindMoneyScreen = ({ navigation }) => {
       icon: 'chatbox-ellipses',
       onPress: () => setShowAIAssistant(true)
     },
-  
+    {
+      id: 'rewards',
+      title: 'Personalised Rewards',
+      description: 'Earn rewards for reaching your finance and wellness goals.',
+      icon: 'gift',
+      onPress: () => navigation.navigate('Rewards')
+    },
     // {
     //   id: 'debt',
     //   title: 'Debt Support & Loan Guidance',
@@ -323,75 +343,71 @@ const MindMoneyScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
-  // Define the notification timer effect
+  // Define the notification timer effect and notification response handler
   useEffect(() => {
-    // Function to show a random insight notification
-    const showRandomInsight = () => {
+    // Request notification permissions when component mounts
+    notificationService.requestPermissions();
+    
+    // Track app state to reset notification timer when app comes to foreground
+    const appStateSubscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        // App has come to the foreground
+        console.log('App has come to the foreground');
+      }
+    });
+    
+    // Function to show a random insight as a mobile notification
+    const showRandomInsightNotification = () => {
       // Pick a random insight
       const randomIndex = Math.floor(Math.random() * financialInsights.length);
       const insight = financialInsights[randomIndex];
       
-      // Set the current notification and show it
-      setCurrentNotification(insight);
-      setShowNotification(true);
+      // Create notification data
+      const notificationData: NotificationData = {
+        id: insight.id,
+        title: insight.title,
+        body: insight.description,
+        type: insight.type as 'warning' | 'alert' | 'suggestion' | 'saving',
+        data: {
+          insightId: insight.id,
+          type: insight.type
+        }
+      };
       
-      // Animate the notification in
-      Animated.parallel([
-        Animated.timing(notificationOpacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true
-        }),
-        Animated.timing(notificationPosition, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true
-        })
-      ]).start();
-      
-      // Auto-dismiss after 5 seconds
-      setTimeout(() => {
-        dismissNotification();
-      }, 5000);
+      // Using presentNotificationImmediately for more reliable notifications
+      console.log("Showing notification:", notificationData.title);
+      notificationService.presentNotificationImmediately(notificationData);
     };
     
-    // Set up timer to show notification every 100 seconds
-    const notificationTimer = setInterval(showRandomInsight, 1000); // 100000ms = 100 seconds
+    // Set up interval for notifications (every 100 seconds for testing)
+    const notificationTimer = setInterval(showRandomInsightNotification, 100000); // 100 seconds for testing
     
     // Show first notification after a short delay
-    const initialTimer = setTimeout(showRandomInsight, 2000); // Show first notification after 2 seconds
+    const initialTimer = setTimeout(showRandomInsightNotification, 2000);
     
-    // Clean up timers on unmount
+    // Set up notification response listener
+    const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      // Handle the notification tap here
+      console.log('Notification tapped:', response);
+      
+      // Open AI Assistant when notification is tapped
+      setShowAIAssistant(true);
+    });
+    
+    // Set up notification received listener (when app is in foreground)
+    const notificationReceivedListener = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received in foreground:', notification);
+    });
+    
+    // Clean up on component unmount
     return () => {
       clearInterval(notificationTimer);
       clearTimeout(initialTimer);
+      notificationResponseListener.remove();
+      notificationReceivedListener.remove();
+      appStateSubscription.remove();
     };
   }, []);
-  
-  // Function to dismiss the notification
-  const dismissNotification = () => {
-    // Animate out
-    Animated.parallel([
-      Animated.timing(notificationOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true
-      }),
-      Animated.timing(notificationPosition, {
-        toValue: -100,
-        duration: 300,
-        useNativeDriver: true
-      })
-    ]).start(() => {
-      setShowNotification(false);
-    });
-  };
-  
-  // Handle notification tap
-  const handleNotificationTap = () => {
-    dismissNotification();
-    setShowAIAssistant(true);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -409,58 +425,6 @@ const MindMoneyScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Mind & Money</Text>
         <View style={styles.headerIconPlaceholder} />
       </View>
-
-      {/* Push Notification */}
-      {showNotification && currentNotification && (
-        <Animated.View 
-          style={[
-            styles.notificationContainer,
-            {
-              transform: [{ translateY: notificationPosition }],
-              opacity: notificationOpacity,
-            },
-            currentNotification.type === 'warning' && styles.warningNotification,
-            currentNotification.type === 'alert' && styles.alertNotification,
-            currentNotification.type === 'suggestion' && styles.suggestionNotification,
-            currentNotification.type === 'saving' && styles.savingNotification,
-          ]}
-        >
-          <TouchableOpacity 
-            style={styles.notificationContent}
-            onPress={handleNotificationTap}
-          >
-            <View style={styles.notificationIconContainer}>
-              <Ionicons 
-                name={currentNotification.icon} 
-                size={22} 
-                color={theme.colors.white} 
-              />
-            </View>
-            <View style={styles.notificationTextContainer}>
-              <Text style={styles.notificationTitle}>
-                {currentNotification.title}
-              </Text>
-              <Text 
-                style={styles.notificationDescription}
-                numberOfLines={2}
-              >
-                {currentNotification.description}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.notificationCloseButton}
-            onPress={dismissNotification}
-          >
-            <Ionicons 
-              name="close" 
-              size={20} 
-              color={isDarkMode ? theme.colors.grey300 : theme.colors.grey500} 
-            />
-          </TouchableOpacity>
-        </Animated.View>
-      )}
 
       <ScrollView style={styles.scrollView}>
         <View style={styles.dateContainer}>
@@ -481,7 +445,7 @@ const MindMoneyScreen = ({ navigation }) => {
         {mentalWellnessOptions.map(option => renderOptionCard(option))}
 
     
-        <Text style={styles.sectionTitle}>Practical Resources & Life Skills</Text>
+        <Text style={styles.sectionTitle}>Personalised Insights & Rewards</Text>
         {practicalResourcesOptions.map(option => renderOptionCard(option))}
 
         <TouchableOpacity style={styles.specialistButton}>

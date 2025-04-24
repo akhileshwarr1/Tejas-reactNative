@@ -13,6 +13,7 @@ import MindMoneyScreen from '../screens/MindMoneyScreen';
 import ChatTherapyScreen from '../screens/ChatTherapyScreen';
 import BudgetingScreen from '../screens/BudgetingScreen';
 import WellnessDashboardScreen from '../screens/WellnessDashboardScreen';
+import RewardsScreen from '../screens/RewardsScreen';
 
 // Create navigation stacks
 const Stack = createNativeStackNavigator();
@@ -55,6 +56,11 @@ const MainStack = () => {
       <Stack.Screen 
         name="WellnessDashboard" 
         component={WellnessDashboardScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="Rewards" 
+        component={RewardsScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
