@@ -11,6 +11,8 @@ import LoginScreen from '../screens/LoginScreen';
 import SuccessScreen from '../screens/SuccessScreen';
 import MindMoneyScreen from '../screens/MindMoneyScreen';
 import ChatTherapyScreen from '../screens/ChatTherapyScreen';
+import BudgetingScreen from '../screens/BudgetingScreen';
+import WellnessDashboardScreen from '../screens/WellnessDashboardScreen';
 
 // Create navigation stacks
 const Stack = createNativeStackNavigator();
@@ -45,6 +47,16 @@ const MainStack = () => {
         component={ChatTherapyScreen} 
         options={{ headerShown: false }}
       />
+      <Stack.Screen 
+        name="Budgeting" 
+        component={BudgetingScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="WellnessDashboard" 
+        component={WellnessDashboardScreen} 
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
@@ -60,8 +72,8 @@ const MainTabs = () => {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'LloydsHome') {
             iconName = focused ? 'wallet' : 'wallet-outline';
-          } else if (route.name === 'Schedule') {
-            iconName = focused ? 'calendar' : 'calendar-outline';
+          } else if (route.name === 'Payments') {
+            iconName = focused ? 'money' : 'money-outline';
           } else if (route.name === 'Speakers') {
             iconName = focused ? 'people' : 'people-outline';
           } else if (route.name === 'More') {
@@ -79,10 +91,10 @@ const MainTabs = () => {
     >
       <Tab.Screen 
         name="Home" 
-        component={HomeScreen}
+        component={LloydsHomeScreen}
         options={{ 
           headerShown: false,
-          title: 'Event Home'
+          title: 'Home'
         }}
       />
       <Tab.Screen 
@@ -90,25 +102,14 @@ const MainTabs = () => {
         component={LloydsHomeScreen}
         options={{ 
           headerShown: false,
-          title: 'Lloyds Home'
+          title: 'Wallet'
         }}
       />
       <Tab.Screen 
-        name="Schedule" 
+        name="Payments" 
         component={PlaceholderScreen}
         options={{ 
-          title: 'Schedule',
-          headerStyle: {
-            backgroundColor: '#006A4D', // Lloyds green instead of #FF5722
-          },
-          headerTintColor: '#fff'
-        }}
-      />
-      <Tab.Screen 
-        name="Speakers" 
-        component={PlaceholderScreen}
-        options={{ 
-          title: 'Speakers',
+          title: 'Payments',
           headerStyle: {
             backgroundColor: '#006A4D', // Lloyds green instead of #FF5722
           },
@@ -169,7 +170,7 @@ const AppNavigator = () => {
       // Then navigate to the Home tab
       navigationRef.current.dispatch(
         CommonActions.navigate({
-          name: 'Home',
+          name: 'LloydsHome',
         })
       );
     }
@@ -201,13 +202,13 @@ const AppNavigator = () => {
             const nestedRoutes = currentRoute.state.routes;
             // If we are in MainTabs but not on Home tab, and there's a pending Home action
             if (currentRoute.name === 'MainTabs' && 
-                nestedRoutes[currentRoute.state.index]?.name !== 'Home' && 
+                nestedRoutes[currentRoute.state.index]?.name !== 'LloydsHome' && 
                 global.pendingHomeNavigation) {
               // Reset the flag and navigate to Home tab
               global.pendingHomeNavigation = false;
               setTimeout(() => {
                 navigationRef.current?.dispatch(
-                  CommonActions.navigate('Home')
+                  CommonActions.navigate('LloydsHome')
                 );
               }, 0);
             }

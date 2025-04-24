@@ -38,6 +38,12 @@ export const colors = {
   // Background
   background: '#F9FAFC',
   cardBackground: '#FFFFFF',
+
+  // Colors for AI Financial Assistant
+  warning: '#FF9E1B', // Amber for warnings
+  alert: '#D0021B',   // Red for alerts/problems
+  suggestion: '#0077B3', // Blue for suggestions
+  saving: '#006A4D',  // Green for savings opportunities
 };
 
 export const typography = {

@@ -69,7 +69,7 @@ const LloydsHomeScreen = ({ navigation }) => {
             style={styles.quickActionButton}
             onPress={navigateToMindMoney}
           >
-            <Ionicons name="brain" size={24} color={theme.colors.primaryDarkGreen} />
+            <Ionicons name="bulb" size={24} color={theme.colors.primaryDarkGreen} />
             <Text style={styles.quickActionText}>Mind & Money</Text>
           </TouchableOpacity>
 
