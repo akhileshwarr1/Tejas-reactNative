@@ -250,7 +250,7 @@ const MindMoneyScreen = ({ navigation }) => {
   const financialGuidanceOptions = [
     {
         id: 'budget',
-        title: 'Budgeting & Money Management Tools',
+        title: 'Budget & Money Management',
         description: 'AI-driven apps for tracking expenses and creating savings plans.',
         icon: 'calculator',
         onPress: navigateToBudgeting
@@ -261,13 +261,6 @@ const MindMoneyScreen = ({ navigation }) => {
       description: 'Ask questions about your finances and get personalized advice and insights.',
       icon: 'chatbox-ellipses',
       onPress: () => setShowAIAssistant(true)
-    },
-    {
-      id: 'rewards',
-      title: 'Personalised Rewards',
-      description: 'Earn rewards for reaching your finance and wellness goals.',
-      icon: 'gift',
-      onPress: () => navigation.navigate('Rewards')
     },
     // {
     //   id: 'debt',
@@ -291,6 +284,13 @@ const MindMoneyScreen = ({ navigation }) => {
 
   // Practical resources options from prompts.txt
   const practicalResourcesOptions = [
+    {
+        id: 'rewards',
+        title: 'Personalised Rewards',
+        description: 'Earn rewards for reaching your finance and wellness goals.',
+        icon: 'gift',
+        onPress: () => navigation.navigate('Rewards')
+      },
     {
       id: 'education',
       title: 'Educational Hub',
